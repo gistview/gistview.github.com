@@ -1,9 +1,9 @@
 {
   "name": "gistview",
   "id": "gistview",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Github gist viewer",
-  "keywords": [  ],
+  "keywords": [ "gist", "viewer", "demo" ],
   "author": "Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)",
   "homepage": "https://github.com/Gozala/gistview",
   "repository": {
@@ -18,7 +18,7 @@
     "test": ">=0.0.10"
   },
   "engines": {
-    "node": "0.4.x"
+    "node": ">=0.4.x"
   },
   "scripts": {
     "test": "node tests/test-all.js"
