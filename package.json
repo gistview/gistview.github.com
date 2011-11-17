@@ -1,0 +1,30 @@
+{
+  "name": "gistview",
+  "id": "gistview",
+  "version": "0.0.1",
+  "description": "Github gist viewer",
+  "keywords": [  ],
+  "author": "Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)",
+  "homepage": "https://github.com/Gozala/gistview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gozala/gistview.git",
+    "web": "https://github.com/Gozala/gistview"
+  },
+  "bugs": {
+    "url": "http://github.com/Gozala/gistview/issues/"
+  },
+  "devDependencies": {
+    "test": ">=0.0.10"
+  },
+  "engines": {
+    "node": "0.4.x"
+  },
+  "scripts": {
+    "test": "node tests/test-all.js"
+  },
+  "licenses": [{
+    "type" : "MIT",
+    "url" : "http://jeditoolkit.com/LICENSE"
+  }]
+}

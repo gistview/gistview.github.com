@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gist Viewer</title>
+    <style type="text/css">
+    a {
+      color: steelblue !important;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    body, .gist {
+      text-rendering: optimizeLegibility;
+      margin-top: 1em;
+    }
+
+    html, body, iframe {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      border: none;
+      font: 14px Helvetica Neue;
+    }
+
+    #link {
+      position: absolute;
+      z-index: 2;
+      top:0;
+      right:0;
+      border:0;
+    }
+
+    #intro {
+      position: fixed;
+      z-index: 3;
+      padding: 10px 100px;
+    }
+    </style>
+    <script data-main="./main" src="http://jsm.io/jsm.js"></script>
+    <script>
+    define('./main', function(require, exports, module) {
+      var streamer = require('https://raw.github.com/Gozala/streamer/d3526b9b7a1e287bb59f4b8b2c331c9aad2a78b8/core')
+
+      function hashes(next) {
+        /**
+        stream of hashes.
+        **/
+        function tail(next) {
+          window.addEventListener('hashchange', function onEvent(event) {
+            window.removeEventListener('hashchange', onEvent, false)
+            var hash = document.location.hash.substr(1)
+            hash ? next(hash, tail) : tail(next)
+          }, false)
+        }
+
+        var hash = document.location.hash.substr(1)
+        hash ? next(hash, tail) : tail(next)
+      }
+      exports.hashes = hashes
+
+      function readURL(url) {
+        return function stream(next) {
+          var xhr = new XMLHttpRequest()
+          xhr.open('GET', url, true)
+          xhr.onreadystatechange = function onEvent() {
+            if (xhr.readyState === 4) {
+              if (xhr.status === 0 || xhr.status === 200)
+                next(xhr.responseText, streamer.empty)
+              else
+                next(xhr.statusText)
+            }
+          }
+          xhr.send()
+        }
+      }
+      exports.readURL = readURL
+
+      function url(id) { return "https://api.github.com/gists/" + id }
+      var urls = streamer.map(url, hashes);
+
+      var gists = streamer.map(JSON.parse, streamer.flatten(streamer.map(readURL, urls)))
+      function frame() {
+        return document.getElementById("frame")
+      }
+      function id(value) {
+        var element = document.getElementById("link");
+        element.href = "http://gist.github.com/" + value
+      }
+      function description(value) {
+        document.title = value
+      }
+      function intro(value) {
+        document.getElementById('intro').innerHTML = value
+      }
+
+      streamer.on(hashes)(function(id) {
+        intro('<h1>Loading</h1><h2>Gist: <a href="' + url(id) + '">#' + id + '</a></h2>')
+      })
+      streamer.on(gists)(function(gist) {
+        //console.log(gist)
+        intro('')
+        description(gist.description)
+        id(gist.id)
+
+        var index = gist.files['index.html']
+        frame().src = encodeURI('data:text/html,' +
+          '<base href="https://raw.github.com/gist/' + gist.id + '/"></base>' +
+          index.content)
+      })
+    })
+    </script>
+  </head>
+  <body>
+    <a id="link" href="http://github.com/Gozala/gistview"><img width="149" height="149" src="./assets/forkme.png" alt="Fork me on GitHub"/></a>
+    <iframe id="frame" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+
+    <div id="intro">
+      <h1>GistView</h1>
+      <p>
+        This website is a simple viewer for code examples hosted
+        on <a href="http://gist.github.com/">GitHub Gist</a>. Code up an example
+        using Gist, and then point people here to view the example and the
+        source code, live! The main source code for your example should be
+        named <tt>index.html</tt>. You can use relative links to other files in
+        your Gist. You can also use absolute links to shared files, such as
+        <a href="http://docs.jquery.com/Downloading_jQuery#CDN_Hosted_jQuery">CDN-hosted
+        jQuery</a>, Polymaps, Rapha&euml;l, <i>etc.</i>
+        <!-- You can also include an
+        optional README; <a href="http://daringfireball.net/projects/markdown/"
+        >Markdown</a> and plain text are supported.
+        -->
+    </p>
+    <h2>Want to see an example?</h2>
+    <p>
+      Checkout these pretty <a href="#582915">streamgraphs</a> done in Protovis.
+    </p>
+  </div>
+  </body>
+</html>
+
