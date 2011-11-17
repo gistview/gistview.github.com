@@ -17,6 +17,10 @@
       margin-top: 1em;
     }
 
+    img: {
+      border: none;
+    }
+
     html, body, iframe {
       background: transparent;
       margin: 0;
@@ -30,7 +34,7 @@
 
     #link {
       position: absolute;
-      z-index: 2;
+      z-index: 3;
       top:0;
       right:0;
       border:0;
@@ -38,8 +42,14 @@
 
     #intro {
       position: fixed;
-      z-index: 3;
+      z-index: 2;
       padding: 10px 100px;
+    }
+
+    #logo {
+      position: fixed;
+      bottom: 30px;
+      left: 50px;
     }
     </style>
     <script data-main="./main" src="http://jsm.io/jsm.js"></script>
@@ -121,7 +131,7 @@
     <iframe id="frame" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 
     <div id="intro">
-      <h1>GistView</h1>
+      <h1>GistView:</h1>
       <p>
         This website is a simple viewer for code examples hosted
         on <a href="http://gist.github.com/">GitHub Gist</a>. Code up an example
@@ -129,17 +139,15 @@
         source code, live! The main source code for your example should be
         named <tt>index.html</tt>. You can use relative links to other files in
         your Gist. You can also use absolute links to shared files, such as
-        <a href="http://docs.jquery.com/Downloading_jQuery#CDN_Hosted_jQuery">CDN-hosted
-        jQuery</a>, Polymaps, Rapha&euml;l, <i>etc.</i>
-        <!-- You can also include an
-        optional README; <a href="http://daringfireball.net/projects/markdown/"
-        >Markdown</a> and plain text are supported.
-        -->
+        <a href="http://docs.jquery.com/Downloading_jQuery#CDN_Hosted_jQuery">CDN-hosted jQuery</a>,
+        Polymaps, Rapha&euml;l, <i>etc.</i>
     </p>
     <h2>Want to see an example?</h2>
     <p>
-      Checkout these pretty <a href="#582915">streamgraphs</a> done in Protovis.
+      Checkout these pretty <a href="#1373819">streamgraphs</a> done in
+      <a href="http://mbostock.github.com/d3/">d3.js</a>
     </p>
+    <img id="logo" src="https://assets.github.com/images/modules/footer/blacktocat.svg"/>
   </div>
   </body>
 </html>
