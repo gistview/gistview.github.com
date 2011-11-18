@@ -1,7 +1,7 @@
 {
   "name": "gistview",
   "id": "gistview",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Github gist viewer",
   "keywords": [ "gist", "viewer", "demo", "snippets" ],
   "author": "Irakli Gozalishvili <rfobic@gmail.com> (http://jeditoolkit.com)",
