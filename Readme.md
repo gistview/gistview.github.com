@@ -7,11 +7,11 @@ source code, live! The main source code for your example should be named
 also use absolute links to shared files, such as CDN-hosted jQuery, Polymaps,
 Raphaël, etc.
 
-# Example # 
+# Example #
 
 Checkout these pretty [streamgraphs] done in [d3.js]. 
 
-[streamgraphs]:http://jeditoolkit.com/gistview/#1373819
+[streamgraphs]:http://gistview.github.com/#1373819
 [d3.js]:http://mbostock.github.com/d3/
 [GitHub]:https://github.com/
 [Gist]:https://gist.github.com/
