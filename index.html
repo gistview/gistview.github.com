@@ -72,7 +72,8 @@
           }, false)
         }
 
-        setTimeout(next, 0, document.location.hash.substr(1), tail)
+        var hash = document.location.hash.substr(1)
+        hash ? setTimeout(next, 0, hash, tail) : tail(next)
       })
 
       function readURL(url) {
@@ -119,7 +120,7 @@
         link(id)
       })
       streamer.on(root)(function(id) {
-        navigate('')
+        navigate('about:blank')
         turn('')
         describe('Gist Viewer')
         link('https://github.com/gistview/gistview.github.com')
