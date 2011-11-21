@@ -46,33 +46,34 @@
       padding: 10px 100px;
     }
 
+    #state {
+      z-index: 3;
+    }
+
     #logo {
       position: fixed;
       bottom: 30px;
       left: 50px;
     }
     </style>
-    <script data-main="./main" src="http://jsm.io/jsm.js"></script>
+    <script data-main="main" src="http://jsm.io/jsm.js"></script>
     <script>
-    define('./main', function(require, exports, module) {
+    define('main', function(require, exports, module) {
       var streamer = require('https://raw.github.com/Gozala/streamer/d3526b9b7a1e287bb59f4b8b2c331c9aad2a78b8/core')
 
-      function hashes(next) {
+      var hashes = streamer.hub(function hashes(next) {
         /**
         stream of hashes.
         **/
         function tail(next) {
           window.addEventListener('hashchange', function onEvent(event) {
             window.removeEventListener('hashchange', onEvent, false)
-            var hash = document.location.hash.substr(1)
-            hash ? next(hash, tail) : tail(next)
+            next(document.location.hash.substr(1), tail)
           }, false)
         }
 
-        var hash = document.location.hash.substr(1)
-        hash ? next(hash, tail) : tail(next)
-      }
-      exports.hashes = hashes
+        setTimeout(next, 0, document.location.hash.substr(1), tail)
+      })
 
       function readURL(url) {
         return function stream(next) {
@@ -89,39 +90,51 @@
           xhr.send()
         }
       }
-      exports.readURL = readURL
 
-      function url(id) { return "https://api.github.com/gists/" + id }
-      var urls = streamer.map(url, hashes);
+      function urlify(id) { return "https://api.github.com/gists/" + id }
 
-      var gists = streamer.map(JSON.parse, streamer.flatten(streamer.map(readURL, urls)))
-      function frame() {
-        return document.getElementById("frame")
-      }
-      function id(value) {
-        var element = document.getElementById("link");
-        element.href = "http://gist.github.com/" + value
-      }
-      function description(value) {
-        document.title = value
-      }
-      function intro(value) {
-        document.getElementById('intro').innerHTML = value
-      }
+      var root = streamer.filter(function(hash) { return !hash }, hashes)
+      var ids = streamer.filter(function(hash) { return hash }, hashes)
+      var urls = streamer.map(urlify, ids)
+      var contents = streamer.flatten(streamer.map(readURL, urls))
+      var gists = streamer.map(JSON.parse, contents)
 
-      streamer.on(hashes)(function(id) {
-        intro('<h1>Loading</h1><h2>Gist: <a href="' + url(id) + '">#' + id + '</a></h2>')
+      function frame() { return document.getElementById("frame") }
+      function intro(value) { return document.getElementById('intro') }
+      function state(value) { return document.getElementById('state') }
+      function ribbon(value) { return document.getElementById("link") }
+
+      function link(value) { ribbon().href = "http://gist.github.com/" + value }
+      function navigate(value) { frame().contentWindow.location.replace(value) }
+      function turn(value) { state().innerHTML = value || '' }
+      function describe(value) { document.title = value }
+      function hide(element) { element.style.display = 'none' }
+      function show(element) { element.style.display = 'block' }
+
+      streamer.on(ids)(function(id) {
+        hide(intro())
+        hide(frame())
+        describe('Loading Gist: #' + id)
+        turn('Loading Gist: <a href="' + urlify(id) + '"># ' + id + '</a>')
+        link(id)
+      })
+      streamer.on(root)(function(id) {
+        navigate('')
+        turn('')
+        describe('Gist Viewer')
+        link('https://github.com/gistview/gistview.github.com')
+        hide(frame())
+        show(intro())
       })
       streamer.on(gists)(function(gist) {
-        //console.log(gist)
-        intro('')
-        description(gist.description)
-        id(gist.id)
+        turn('')
+        show(frame())
+        describe(gist.description)
 
         var index = gist.files['index.html']
-        frame().src = encodeURI('data:text/html,' +
+        navigate(encodeURI('data:text/html,' +
           '<base href="https://raw.github.com/gist/' + gist.id + '/"></base>' +
-          index.content)
+          index.content))
       })
     })
     </script>
@@ -129,7 +142,7 @@
   <body>
     <a id="link" href="https://github.com/gistview/gistview.github.com"><img width="149" height="149" src="./assets/forkme.png" alt="Fork me on GitHub"/></a>
     <iframe id="frame" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-
+    <h1 id="state"></h1>
     <div id="intro">
       <h1>GistView:</h1>
       <p>
